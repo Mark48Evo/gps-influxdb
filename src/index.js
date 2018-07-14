@@ -2,14 +2,26 @@ import SystemGPS from '@mark48evo/system-gps';
 import { InfluxDB, FieldType } from 'influx';
 import amqplib from 'amqplib';
 import Debug from 'debug';
+import pmx from 'pmx';
 
 const debug = Debug('gps:influxdb');
+
+pmx.init({});
+
+const messagesProcessed = pmx.probe().counter({
+  name: 'GPS Messages Processed',
+});
+
+const messagesProcessedPerMin = pmx.probe().meter({
+  name: 'msg/min',
+  samples: 1,
+  timeframe: 60,
+});
 
 const config = {
   influxHost: process.env.INFLUXDB_HOST || 'localhost',
   influxDB: process.env.INFLUXDB_DB || 'mark48evo',
   host: process.env.RABBITMQ_HOST || 'amqp://localhost',
-  redisURL: process.env.REDIS_URL || 'redis://127.0.0.1:6379/3',
 };
 
 const influx = new InfluxDB({
@@ -61,6 +73,9 @@ async function main() {
   const systemGPS = await SystemGPS(channel);
 
   systemGPS.on('nav.pvt', (data) => {
+    messagesProcessed.inc();
+    messagesProcessedPerMin.mark();
+
     const packet = data.data;
 
     const fields = {

@@ -17,6 +17,7 @@ export default [
       'influx',
       'amqplib',
       'debug',
+      'pmx',
     ],
     plugins: [
       babel({

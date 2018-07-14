@@ -15,6 +15,8 @@
   "main": "dist/index.js",
   "scripts": {
     "rollup": "rollup -c rollup.config.js",
+    "prepublishOnly": "rollup -c rollup.config.js",
+    "pretest": "eslint ./src",
     "lint": "eslint ./src",
     "lint-fix": "eslint ./src --fix"
   },
@@ -31,7 +33,8 @@
     "@mark48evo/system-gps": "^1.0.3",
     "amqplib": "^0.5.2",
     "debug": "^3.1.0",
-    "influx": "^5.0.7"
+    "influx": "^5.0.7",
+    "pmx": "^1.6.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
